@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Tables from './components/Tables.vue';
+import Home from './components/Home.vue';
+import TechMasterTables from './components/TechMasterTables.vue';
+import AppMasterTables from './components/AppMasterTables.vue';
+import DataMasterTables from './components/DataMasterTables.vue';
+import OSMasterTables from './components/OSMasterTables.vue';
 import Ping from './components/Ping.vue';
 
 Vue.use(Router);
@@ -11,8 +15,28 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Tables',
-      component: Tables,
+      name: 'Home',
+      component: Home,
+    },
+    {
+      path: '/tech_master',
+      name: 'TechMasterTables',
+      component: TechMasterTables,
+    },
+    {
+      path: '/os_tech_master',
+      name: 'OSMasterTables',
+      component: OSMasterTables,
+    },
+    {
+      path: '/data_tech_master',
+      name: 'DataMasterTables',
+      component: DataMasterTables,
+    },
+    {
+      path: '/app_tech_master',
+      name: 'AppMasterTables',
+      component: AppMasterTables,
     },
     {
       path: '/ping',

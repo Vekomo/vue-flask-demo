@@ -17,11 +17,13 @@ from models import*
 def hello():
     return "Hello World!"
 
-@app.route("/add_tech")
+@app.route("/add_tech", methods=['GET', 'POST'])
 def add_tech():
-    technology_name=request.args.get('technology_name')
-    tech_dependant_tags=request.args.get('tech_dependant_tags')
-    stack_description=request.args.get('stack_description')
+    post_data = request.get_json()
+    print(post_data)
+    technology_name=post_data.get('technology_name')
+    tech_dependant_tags=post_data.get('tech_dependant_tags')
+    stack_description=post_data.get('stack_description')
     try:
         tech_master=Technology_Master(
             technology_name=technology_name,
@@ -34,13 +36,17 @@ def add_tech():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/add_os")
+@app.route("/add_os", methods=['POST'])
 def add_os():
-    OS_technology_name=request.args.get('OS_technology_name')
-    OS_tech_dependant_tags=request.args.get('OS_tech_dependant_tags')
-    OS_tech_description=request.args.get('OS_tech_description')
+    post_data = request.get_json()
+    print(post_data)
+    technology_id=post_data.get('technology_id')
+    OS_technology_name=post_data.get('OS_technology_name')
+    OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
+    OS_tech_description=post_data.get('OS_tech_description')
     try:
         os_tech_master=OS_Tech_Master(
+            technology_id=technology_id,
             OS_technology_name=OS_technology_name,
             OS_tech_dependant_tags=OS_tech_dependant_tags,
             OS_tech_description=OS_tech_description
@@ -49,15 +55,19 @@ def add_os():
         db.session.commit()
         return "OS added to OS_Tech_Master via add_os! OS technology_id={}".format(OS_Tech_Master.technology_id)
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
 
-@app.route("/add_data")
+@app.route("/add_data", methods=['POST'])
 def add_data():
-    Data_technology_name=request.args.get('Data_technology_name')
-    Data_tech_dependant_tags=request.args.get('Data_tech_dependant_tags')
-    Data_tech_description=request.args.get('Data_tech_description')
+    post_data = request.get_json()
+    technology_id=post_data.get('technology_id')
+    Data_technology_name=post_data.get('Data_technology_name')
+    Data_tech_dependant_tags=post_data.get('Data_tech_dependant_tags')
+    Data_tech_description=post_data.get('Data_tech_description')
     try:
         data_tech_master=Data_Tech_Master(
+            technology_id=technology_id,
             Data_technology_name=Data_technology_name,
             Data_tech_dependant_tags=Data_tech_dependant_tags,
             Data_tech_description=Data_tech_description
@@ -68,13 +78,16 @@ def add_data():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/add_app")
+@app.route("/add_app", methods=['POST'])
 def add_app():
-    App_technology_name=request.args.get('App_technology_name')
-    App_tech_dependant_tags=request.args.get('App_tech_dependant_tags')
-    App_tech_description=request.args.get('App_tech_description')
+    post_data = request.get_json()
+    technology_id=post_data.get('technology_id')
+    App_technology_name=post_data.get('App_technology_name')
+    App_tech_dependant_tags=post_data.get('App_tech_dependant_tags')
+    App_tech_description=post_data.get('App_tech_description')
     try:
         app_tech_master=App_Tech_Master(
+            technology_id=technology_id,
             App_technology_name=App_technology_name,
             App_tech_dependant_tags=App_tech_dependant_tags,
             App_tech_description=App_tech_description
@@ -125,6 +138,107 @@ def get_app_master():
     except Exception as e:
 	    return(str(e))
 
+@app.route("/update_tech/<tech_id>", methods=['PUT', 'DELETE'])
+def update_tech_master(tech_id):
+    if request.method == 'DELETE':
+        techs=Technology_Master.query.filter_by(technology_id=tech_id).first()
+        try:
+            db.session.delete(techs)
+            db.session.commit()
+        except Exception as e:
+    	    return(str(e))
+        return jsonify({'status': 'success'})
+    post_data = request.get_json()
+    technology_name=post_data.get('technology_name')
+    tech_dependant_tags=post_data.get('tech_dependant_tags')
+    stack_description=post_data.get('stack_description')
+    techs=Technology_Master.query.filter_by(technology_id=tech_id).first()
+    try:
+        techs.technology_name = technology_name
+        techs.tech_dependant_tags = tech_dependant_tags
+        techs.stack_description = stack_description
+        db.session.commit()
+    except Exception as e:
+	    return(str(e))
+    return jsonify({'status': 'success'})
+
+@app.route("/update_data/<data_name>", methods=['PUT', 'DELETE'])
+def update_data_master(data_name):
+    if request.method == 'DELETE':
+        techs=Data_Tech_Master.query.filter_by(Data_technology_name=data_name).first()
+        try:
+            db.session.delete(techs)
+            db.session.commit()
+        except Exception as e:
+    	    return(str(e))
+        return jsonify({'status': 'success'})
+    post_data = request.get_json()
+    Data_technology_name = post_data.get('Data_technology_name')
+    Data_tech_dependant_tags=post_data.get('Data_tech_dependant_tags')
+    Data_tech_description=post_data.get('Data_tech_description')
+    technology_id=post_data.get('technology_id')
+    techs=Data_Tech_Master.query.filter_by(Data_technology_name=Data_technology_name).first()
+    try:
+        techs.technology_id = technology_id
+        techs.Data_technology_name = data_name
+        techs.Data_tech_dependant_tags = Data_tech_dependant_tags
+        techs.Data_tech_description = Data_tech_description
+        db.session.commit()
+    except Exception as e:
+	    return(str(e))
+    return jsonify({'status': 'success'})
+
+@app.route("/update_os/<os_name>", methods=['PUT', 'DELETE'])
+def update_os_master(os_name):
+    if request.method == 'DELETE':
+        techs=OS_Tech_Master.query.filter_by(OS_technology_name=os_name).first()
+        try:
+            db.session.delete(techs)
+            db.session.commit()
+        except Exception as e:
+    	    return(str(e))
+        return jsonify({'status': 'success'})
+    post_data = request.get_json()
+    OS_technology_name = post_data.get('OS_technology_name')
+    OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
+    OS_tech_description=post_data.get('OS_tech_description')
+    technology_id=post_data.get('technology_id')
+    techs=OS_Tech_Master.query.filter_by(OS_technology_name=OS_technology_name).first()
+    try:
+        techs.technology_id = technology_id
+        techs.OS_technology_name = os_name
+        techs.OS_tech_dependant_tags = OS_tech_dependant_tags
+        techs.OS_tech_description = OS_tech_description
+        db.session.commit()
+    except Exception as e:
+	    return(str(e))
+    return jsonify({'status': 'success'})
+
+@app.route("/update_app/<app_name>", methods=['PUT', 'DELETE'])
+def update_app_master(app_name):
+    if request.method == 'DELETE':
+        techs=App_Tech_Master.query.filter_by(App_technology_name=app_name).first()
+        try:
+            db.session.delete(techs)
+            db.session.commit()
+        except Exception as e:
+    	    return(str(e))
+        return jsonify({'status': 'success'})
+    post_data = request.get_json()
+    App_technology_name = post_data.get('App_technology_name')
+    App_tech_dependant_tags=post_data.get('App_tech_dependant_tags')
+    App_tech_description=post_data.get('App_tech_description')
+    technology_id=post_data.get('technology_id')
+    techs=App_Tech_Master.query.filter_by(App_technology_name=App_technology_name).first()
+    try:
+        techs.technology_id = technology_id
+        techs.App_technology_name = app_name
+        techs.App_tech_dependant_tags = App_tech_dependant_tags
+        techs.App_tech_description = App_tech_description
+        db.session.commit()
+    except Exception as e:
+	    return(str(e))
+    return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
     app.hello()
