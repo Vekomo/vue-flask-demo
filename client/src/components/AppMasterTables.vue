@@ -71,6 +71,7 @@
           <b-form-input id="form-app-name-input"
                          type="text"
                          required
+                         maxlength=50
                          v-model="addForm.name">
                        </b-form-input>
       </b-form-group>
@@ -80,6 +81,7 @@
           <b-form-input id="form-app-tags-input"
                          type="text"
                          required
+                         maxlength=2000
                          v-model="addForm.tags">
                        </b-form-input>
       </b-form-group>
@@ -89,6 +91,7 @@
           <b-form-input id="form-app-description-input"
                          type="text"
                          required
+                         maxlength=500
                          v-model="addForm.description">
                        </b-form-input>
       </b-form-group>
@@ -117,6 +120,7 @@
                     type="text"
                     v-model="editForm.name"
                     required
+                    maxlength=50
                     placeholder="Enter name">
       </b-form-input>
     </b-form-group>
@@ -127,6 +131,7 @@
                       type="text"
                       v-model="editForm.tags"
                       required
+                      maxlength=2000
                       placeholder="Enter tags">
         </b-form-input>
       </b-form-group>
@@ -137,6 +142,7 @@
                     type="text"
                     v-model="editForm.description"
                     required
+                    maxlength=500
                     placeholder="Enter description">
       </b-form-input>
     </b-form-group>
@@ -157,6 +163,7 @@ export default {
     return {
       response: [],
       tech_id: [],
+      tech_map: {},
       addForm: {
         name: '',
         tags: '',
@@ -199,7 +206,7 @@ export default {
       evt.preventDefault();
       this.$refs.addAppModal.hide();
       const payload = {
-        technology_id: this.addForm.id,
+        technology_id: this.tech_map[this.addForm.id],
         App_technology_name: this.addForm.name,
         App_tech_dependant_tags: this.addForm.tags,
         App_tech_description: this.addForm.description,
@@ -215,7 +222,8 @@ export default {
           let i;
           for (i = 0; i < this.tech_id.length; i += 1) {
             if (!this.tech.includes(this.tech_id[i].technology_id)) {
-              this.tech.push(this.tech_id[i].technology_id);
+              this.tech.push(this.tech_id[i].technology_name);
+              this.tech_map[this.tech_id[i].technology_name] = this.tech_id[i].technology_id;
             }
           }
         })
@@ -232,7 +240,7 @@ export default {
       evt.preventDefault();
       this.$refs.editAppModal.hide();
       const payload = {
-        technology_id: this.editForm.technology_id,
+        technology_id: this.tech_map[this.editForm.technology_id],
         App_technology_name: this.editForm.old_name,
         App_tech_dependant_tags: this.editForm.tags,
         App_tech_description: this.editForm.description,
@@ -255,7 +263,7 @@ export default {
     },
     // eslint-disable-next-line
     removeEntry(app_name) {
-      const path = 'http://localhost:5000/update_app/' + app_name; // eslint-disable-line
+      const path = 'http://localhost:5000/delete_app/' + app_name; // eslint-disable-line
       axios.delete(path)
         .then(() => {
           this.getApp();

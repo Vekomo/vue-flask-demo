@@ -76,7 +76,8 @@ def add_data():
         db.session.commit()
         return "Data added to Data_Tech_Master via add_data! Data technology_id={}".format(Data_Tech_Master.technology_id)
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
 
 @app.route("/add_app", methods=['POST'])
 def add_app():
@@ -96,7 +97,8 @@ def add_app():
         db.session.commit()
         return "App added to App_Tech_Master via add_app! App technology_id={}".format(App_Tech_Master.technology_id)
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
 @app.route("/getall")
 def get_all():
     try:
@@ -138,16 +140,21 @@ def get_app_master():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/update_tech/<tech_id>", methods=['PUT', 'DELETE'])
+@app.route("/delete_tech/<tech_id>", methods=['DELETE'])
+def delete_tech_master(tech_id):
+    techs=Technology_Master.query.filter_by(technology_id=tech_id).first()
+    try:
+        db.session.delete(techs)
+        db.session.commit()
+    except Exception as e:
+        print("EXCEPTION")
+        return jsonify({'status': 'fail'})
+        return(str(e))
+    print("SUCCESS")
+    return jsonify({'status': 'success'})
+
+@app.route("/update_tech/<tech_id>", methods=['PUT'])
 def update_tech_master(tech_id):
-    if request.method == 'DELETE':
-        techs=Technology_Master.query.filter_by(technology_id=tech_id).first()
-        try:
-            db.session.delete(techs)
-            db.session.commit()
-        except Exception as e:
-    	    return(str(e))
-        return jsonify({'status': 'success'})
     post_data = request.get_json()
     technology_name=post_data.get('technology_name')
     tech_dependant_tags=post_data.get('tech_dependant_tags')
@@ -159,19 +166,22 @@ def update_tech_master(tech_id):
         techs.stack_description = stack_description
         db.session.commit()
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
     return jsonify({'status': 'success'})
 
-@app.route("/update_data/<data_name>", methods=['PUT', 'DELETE'])
+@app.route("/delete_data/<data_name>", methods=['DELETE'])
+def delete_data_master(data_name):
+    techs=Data_Tech_Master.query.filter_by(Data_technology_name=data_name).first()
+    try:
+        db.session.delete(techs)
+        db.session.commit()
+    except Exception as e:
+        return(str(e))
+    return jsonify({'status': 'success'})
+
+@app.route("/update_data/<data_name>", methods=['PUT'])
 def update_data_master(data_name):
-    if request.method == 'DELETE':
-        techs=Data_Tech_Master.query.filter_by(Data_technology_name=data_name).first()
-        try:
-            db.session.delete(techs)
-            db.session.commit()
-        except Exception as e:
-    	    return(str(e))
-        return jsonify({'status': 'success'})
     post_data = request.get_json()
     Data_technology_name = post_data.get('Data_technology_name')
     Data_tech_dependant_tags=post_data.get('Data_tech_dependant_tags')
@@ -185,19 +195,22 @@ def update_data_master(data_name):
         techs.Data_tech_description = Data_tech_description
         db.session.commit()
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
     return jsonify({'status': 'success'})
 
-@app.route("/update_os/<os_name>", methods=['PUT', 'DELETE'])
+@app.route("/delete_os/<os_name>", methods=['DELETE'])
+def delete_os_master(os_name):
+    techs=OS_Tech_Master.query.filter_by(OS_technology_name=os_name).first()
+    try:
+        db.session.delete(techs)
+        db.session.commit()
+    except Exception as e:
+        return(str(e))
+    return jsonify({'status': 'success'})
+
+@app.route("/update_os/<os_name>", methods=['PUT'])
 def update_os_master(os_name):
-    if request.method == 'DELETE':
-        techs=OS_Tech_Master.query.filter_by(OS_technology_name=os_name).first()
-        try:
-            db.session.delete(techs)
-            db.session.commit()
-        except Exception as e:
-    	    return(str(e))
-        return jsonify({'status': 'success'})
     post_data = request.get_json()
     OS_technology_name = post_data.get('OS_technology_name')
     OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
@@ -211,19 +224,22 @@ def update_os_master(os_name):
         techs.OS_tech_description = OS_tech_description
         db.session.commit()
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
     return jsonify({'status': 'success'})
 
-@app.route("/update_app/<app_name>", methods=['PUT', 'DELETE'])
+@app.route("/delete_app/<app_name>", methods=['DELETE'])
+def delete_app_master(app_name):
+    techs=App_Tech_Master.query.filter_by(App_technology_name=app_name).first()
+    try:
+        db.session.delete(techs)
+        db.session.commit()
+    except Exception as e:
+        return(str(e))
+    return jsonify({'status': 'success'})
+
+@app.route("/update_app/<app_name>", methods=['PUT'])
 def update_app_master(app_name):
-    if request.method == 'DELETE':
-        techs=App_Tech_Master.query.filter_by(App_technology_name=app_name).first()
-        try:
-            db.session.delete(techs)
-            db.session.commit()
-        except Exception as e:
-    	    return(str(e))
-        return jsonify({'status': 'success'})
     post_data = request.get_json()
     App_technology_name = post_data.get('App_technology_name')
     App_tech_dependant_tags=post_data.get('App_tech_dependant_tags')
@@ -237,7 +253,8 @@ def update_app_master(app_name):
         techs.App_tech_description = App_tech_description
         db.session.commit()
     except Exception as e:
-	    return(str(e))
+        print(str(e))
+        return(str(e))
     return jsonify({'status': 'success'})
 
 if __name__ == '__main__':

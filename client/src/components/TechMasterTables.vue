@@ -12,6 +12,7 @@
         </b-sidebar>
   </div>
   <div class ="container">
+    <alert :message ='message' v-if='showMessage'></alert>
     <div class = "row justify-content-md-center">
       <h1>Technology Master</h1>
     </div>
@@ -62,6 +63,7 @@
           <b-form-input id="form-tech-name-input"
                          type="text"
                          required
+                         maxlength=50
                          v-model="addForm.name">
                        </b-form-input>
       </b-form-group>
@@ -71,6 +73,7 @@
           <b-form-input id="form-tech-tags-input"
                          type="text"
                          required
+                         maxlength=2000
                          v-model="addForm.tags">
                        </b-form-input>
       </b-form-group>
@@ -80,6 +83,7 @@
           <b-form-input id="form-stack-description-input"
                          type="text"
                          required
+                         maxlength=500
                          v-model="addForm.description">
                        </b-form-input>
       </b-form-group>
@@ -98,6 +102,7 @@
                     type="text"
                     v-model="editForm.name"
                     required
+                    maxlength=50
                     placeholder="Enter name">
       </b-form-input>
     </b-form-group>
@@ -108,6 +113,7 @@
                       type="text"
                       v-model="editForm.tags"
                       required
+                      maxlength=2000
                       placeholder="Enter tags">
         </b-form-input>
       </b-form-group>
@@ -118,6 +124,7 @@
                     type="text"
                     v-model="editForm.description"
                     required
+                    maxlength=500
                     placeholder="Enter description">
       </b-form-input>
     </b-form-group>
@@ -132,6 +139,7 @@
 
 <script>
 import axios from 'axios';
+import Alert from './Alert.vue';
 
 export default {
   data() {
@@ -148,6 +156,8 @@ export default {
         tags: '',
         description: '',
       },
+      message: 'Cannot delete entry, belongs to child table.',
+      showMessage: false,
     };
   },
   methods: {
@@ -213,14 +223,20 @@ export default {
     },
     // eslint-disable-next-line
     removeEntry(tech_id) {
-      const path = 'http://localhost:5000/update_tech/' + tech_id; // eslint-disable-line
+      const path = 'http://localhost:5000/delete_tech/' + tech_id; // eslint-disable-line
       axios.delete(path)
-        .then(() => {
+        .then((response) => {
+          if (response.data.status) {
+            this.showMessage = true;
+          } else {
+            this.showMessage = false;
+          }
+          console.log(response.data.status);
           this.getTech();
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.error(error);
+          console.log('Bing bong bing there was a pwoblem');
           this.getTech();
         });
     },
@@ -231,6 +247,9 @@ export default {
   created() {
     this.getTech();
     console.log('Succesful.');
+  },
+  components: {
+    alert: Alert,
   },
 };
 </script>
