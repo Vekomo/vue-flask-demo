@@ -19,7 +19,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">technology_id</th>
+            <th scope="col">technology_name</th>
             <th scope="col">App_technology_name</th>
             <th scope="col">App_tech_dependant_tags</th>
             <th scope="col">App_tech_description</th>
@@ -157,8 +157,10 @@
 
 <script>
 import axios from 'axios';
+import PathMixins from '../mixins/pathMixins';
 
 export default {
+  mixins: [PathMixins],
   data() {
     return {
       response: [],
@@ -181,7 +183,7 @@ export default {
   },
   methods: {
     getApp() {
-      const path = 'http://localhost:5000/get_app_master';
+      const path = this.get_app_path;
       axios.get(path)
         .then((res) => {
           this.response = res.data;
@@ -192,7 +194,7 @@ export default {
         });
     },
     addApp(payload) {
-      const path = 'http://127.0.0.1:5000/add_app';
+      const path = this.add_app_path;
       axios.post(path, payload)
         .then(() => {
           this.getApp();
@@ -215,7 +217,7 @@ export default {
       this.addApp(payload);
     },
     getTechId() {
-      const path = 'http://localhost:5000/get_tech_master';
+      const path = this.get_tech_path;
       axios.get(path)
         .then((res) => {
           this.tech_id = res.data;
@@ -250,7 +252,7 @@ export default {
     // eslint-disable-next-line
     updateApp(payload, app_name) {
 
-      const path = 'http://localhost:5000/update_app/' + app_name; // eslint-disable-line
+      const path = this.update_app_path + app_name; // eslint-disable-line
       axios.put(path, payload)
         .then(() => {
           this.getApp();
@@ -263,7 +265,7 @@ export default {
     },
     // eslint-disable-next-line
     removeEntry(app_name) {
-      const path = 'http://localhost:5000/delete_app/' + app_name; // eslint-disable-line
+      const path = this.delete_app_path + app_name; // eslint-disable-line
       axios.delete(path)
         .then(() => {
           this.getApp();

@@ -140,8 +140,10 @@
 <script>
 import axios from 'axios';
 import Alert from './Alert.vue';
+import PathMixins from '../mixins/pathMixins';
 
 export default {
+  mixins: [PathMixins],
   data() {
     return {
       response: [],
@@ -162,7 +164,8 @@ export default {
   },
   methods: {
     getTech() {
-      const path = 'http://localhost:5000/get_tech_master';
+      console.log(this.get_tech_path);
+      const path = this.get_tech_path;
       axios.get(path)
         .then((res) => {
           this.response = res.data;
@@ -210,7 +213,7 @@ export default {
     // eslint-disable-next-line
     updateTech(payload, tech_id) {
 
-      const path = 'http://localhost:5000/update_tech/' + tech_id; // eslint-disable-line
+      const path = this.update_tech_path + tech_id; // eslint-disable-line
       axios.put(path, payload)
         .then(() => {
           this.getTech();
@@ -223,7 +226,7 @@ export default {
     },
     // eslint-disable-next-line
     removeEntry(tech_id) {
-      const path = 'http://localhost:5000/delete_tech/' + tech_id; // eslint-disable-line
+      const path = this.delete_tech_path + tech_id; // eslint-disable-line
       axios.delete(path)
         .then((response) => {
           if (response.data.status) {

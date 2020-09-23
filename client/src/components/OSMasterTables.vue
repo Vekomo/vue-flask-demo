@@ -19,7 +19,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">technology_id</th>
+            <th scope="col">technology_name</th>
             <th scope="col">OS_technology_name</th>
             <th scope="col">OS_tech_dependant_tags</th>
             <th scope="col">OS_tech_description</th>
@@ -158,8 +158,10 @@
 
 <script>
 import axios from 'axios';
+import PathMixins from '../mixins/pathMixins';
 
 export default {
+  mixins: [PathMixins],
   data() {
     return {
       response: [],
@@ -183,7 +185,7 @@ export default {
   },
   methods: {
     getOS() {
-      const path = 'http://localhost:5000/get_os_master';
+      const path = this.get_os_path;
       axios.get(path)
         .then((res) => {
           this.response = res.data;
@@ -194,7 +196,7 @@ export default {
         });
     },
     addOS(payload) {
-      const path = 'http://127.0.0.1:5000/add_os';
+      const path = this.add_os_path;
       axios.post(path, payload)
         .then(() => {
           this.getOS();
@@ -217,7 +219,7 @@ export default {
       this.addOS(payload);
     },
     getTechId() {
-      const path = 'http://localhost:5000/get_tech_master';
+      const path = this.get_tech_path;
       axios.get(path)
         .then((res) => {
           this.tech_id = res.data;
@@ -252,7 +254,7 @@ export default {
     // eslint-disable-next-line
     updateOS(payload, os_name) {
 
-      const path = 'http://localhost:5000/update_os/' + os_name; // eslint-disable-line
+      const path = this.update_os_path + os_name; // eslint-disable-line
       axios.put(path, payload)
         .then(() => {
           this.getOS();
@@ -265,7 +267,7 @@ export default {
     },
     // eslint-disable-next-line
     removeEntry(os_name) {
-      const path = 'http://localhost:5000/delete_os/' + os_name; // eslint-disable-line
+      const path = this.delete_os_path + os_name; // eslint-disable-line
       axios.delete(path)
         .then(() => {
           this.getOS();

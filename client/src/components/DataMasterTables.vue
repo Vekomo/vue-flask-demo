@@ -19,7 +19,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">technology_id</th>
+            <th scope="col">technology_name</th>
             <th scope="col">Data_technology_name</th>
             <th scope="col">Data_tech_dependant_tags</th>
             <th scope="col">Data_tech_description</th>
@@ -158,13 +158,16 @@
 
 <script>
 import axios from 'axios';
+import PathMixins from '../mixins/pathMixins';
 
 export default {
+  mixins: [PathMixins],
   data() {
     return {
       response: [],
       tech_id: [],
       tech_map: {},
+      display_map: {},
       addForm: {
         name: '',
         tags: '',
@@ -182,7 +185,7 @@ export default {
   },
   methods: {
     getData() {
-      const path = 'http://localhost:5000/get_data_master';
+      const path = this.get_data_path;
       axios.get(path)
         .then((res) => {
           this.response = res.data;
@@ -193,7 +196,7 @@ export default {
         });
     },
     addData(payload) {
-      const path = 'http://127.0.0.1:5000/add_data';
+      const path = this.add_data_path;
       axios.post(path, payload)
         .then(() => {
           this.getData();
@@ -216,7 +219,7 @@ export default {
       this.addData(payload);
     },
     getTechId() {
-      const path = 'http://localhost:5000/get_tech_master';
+      const path = this.get_tech_path;
       axios.get(path)
         .then((res) => {
           this.tech_id = res.data;
@@ -225,6 +228,7 @@ export default {
             if (!this.tech.includes(this.tech_id[i].technology_id)) {
               this.tech.push(this.tech_id[i].technology_name);
               this.tech_map[this.tech_id[i].technology_name] = this.tech_id[i].technology_id;
+              this.display_map[this.tech_id[i].technology_id] = this.tech_id[i].technology_name;
             }
           }
         })
@@ -252,7 +256,7 @@ export default {
     // eslint-disable-next-line
     updateData(payload, data_name) {
 
-      const path = 'http://localhost:5000/update_data/' + data_name; // eslint-disable-line
+      const path = this.update_data_path + data_name; // eslint-disable-line
       axios.put(path, payload)
         .then(() => {
           this.getData();
@@ -265,7 +269,7 @@ export default {
     },
     // eslint-disable-next-line
     removeEntry(data_name) {
-      const path = 'http://localhost:5000/delete_data/' + data_name; // eslint-disable-line
+      const path = this.delete_data_path + data_name; // eslint-disable-line
       axios.delete(path)
         .then(() => {
           this.getData();
