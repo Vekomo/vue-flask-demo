@@ -189,6 +189,10 @@ export default {
       axios.get(path)
         .then((res) => {
           this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -285,8 +289,8 @@ export default {
     },
   },
   created() {
-    this.getData();
     this.getTechId();
+    this.getData();
     console.log('Succesful.');
   },
 };

@@ -167,6 +167,7 @@ export default {
       response: [],
       tech_id: [],
       tech_map: {},
+      display_map: {},
       addForm: {
         id: null,
         name: '',
@@ -189,6 +190,10 @@ export default {
       axios.get(path)
         .then((res) => {
           this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -228,6 +233,7 @@ export default {
             if (!this.tech.includes(this.tech_id[i].technology_id)) {
               this.tech.push(this.tech_id[i].technology_name);
               this.tech_map[this.tech_id[i].technology_name] = this.tech_id[i].technology_id;
+              this.display_map[this.tech_id[i].technology_id] = this.tech_id[i].technology_name;
             }
           }
         })
@@ -283,8 +289,8 @@ export default {
     },
   },
   created() {
-    this.getOS();
     this.getTechId();
+    this.getOS();
     console.log('Succesful.');
   },
 };
