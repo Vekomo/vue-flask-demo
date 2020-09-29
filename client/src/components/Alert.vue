@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-alert variant="danger" show>{{ message }}</b-alert>
+    <b-alert variant="danger" show = 3>{{ message }}</b-alert>
     <br>
   </div>
 </template>

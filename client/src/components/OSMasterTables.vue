@@ -203,8 +203,12 @@ export default {
     addOS(payload) {
       const path = this.add_os_path;
       axios.post(path, payload)
-        .then(() => {
-          this.getOS();
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -254,16 +258,21 @@ export default {
         OS_technology_name: this.editForm.old_name,
         OS_tech_dependant_tags: this.editForm.tags,
         OS_tech_description: this.editForm.description,
+        New_OS_name: this.editForm.name,
       };
-      this.updateOS(payload, this.editForm.name);
+      this.updateOS(payload);
     },
     // eslint-disable-next-line
     updateOS(payload, os_name) {
 
-      const path = this.update_os_path + os_name; // eslint-disable-line
+      const path = this.update_os_path; // eslint-disable-line
       axios.put(path, payload)
-        .then(() => {
-          this.getOS();
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -272,11 +281,16 @@ export default {
         });
     },
     // eslint-disable-next-line
-    removeEntry(os_name) {
-      const path = this.delete_os_path + os_name; // eslint-disable-line
-      axios.delete(path)
-        .then(() => {
-          this.getOS();
+    removeEntry(os_name_delete) {
+      const path = this.delete_os_path; // eslint-disable-line
+      const payload = { os_name: os_name_delete };
+      axios.put(path, payload)
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line

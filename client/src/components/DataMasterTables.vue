@@ -202,8 +202,12 @@ export default {
     addData(payload) {
       const path = this.add_data_path;
       axios.post(path, payload)
-        .then(() => {
-          this.getData();
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -255,15 +259,19 @@ export default {
         Data_tech_dependant_tags: this.editForm.tags,
         Data_tech_description: this.editForm.description,
       };
-      this.updateData(payload, this.editForm.name);
+      this.updateData(payload);
     },
     // eslint-disable-next-line
     updateData(payload, data_name) {
 
-      const path = this.update_data_path + data_name; // eslint-disable-line
+      const path = this.update_data_path; // eslint-disable-line
       axios.put(path, payload)
-        .then(() => {
-          this.getData();
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -272,11 +280,16 @@ export default {
         });
     },
     // eslint-disable-next-line
-    removeEntry(data_name) {
-      const path = this.delete_data_path + data_name; // eslint-disable-line
-      axios.delete(path)
-        .then(() => {
-          this.getData();
+    removeEntry(data_name_delete) {
+      const path = this.delete_data_path; // eslint-disable-line
+      const payload = { data_name: data_name_delete };
+      axios.put(path, payload)
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line

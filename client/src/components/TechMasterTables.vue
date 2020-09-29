@@ -164,7 +164,6 @@ export default {
   },
   methods: {
     getTech() {
-      console.log(this.get_tech_path);
       const path = this.get_tech_path;
       axios.get(path)
         .then((res) => {
@@ -176,10 +175,10 @@ export default {
         });
     },
     addTech(payload) {
-      const path = 'http://127.0.0.1:5000/add_tech';
+      const path = this.add_tech_path;
       axios.post(path, payload)
-        .then(() => {
-          this.getTech();
+        .then((res) => {
+          this.response = res.data;
         })
         .catch((error) => {
           console.log(error);
@@ -204,42 +203,44 @@ export default {
       evt.preventDefault();
       this.$refs.editTechModal.hide();
       const payload = {
+        technology_id: this.editForm.technology_id,
         technology_name: this.editForm.name,
         tech_dependant_tags: this.editForm.tags,
         stack_description: this.editForm.description,
       };
-      this.updateTech(payload, this.editForm.technology_id);
+      this.updateTech(payload);
     },
     // eslint-disable-next-line
     updateTech(payload, tech_id) {
 
-      const path = this.update_tech_path + tech_id; // eslint-disable-line
+      const path = this.update_tech_path; // eslint-disable-line
       axios.put(path, payload)
-        .then(() => {
-          this.getTech();
+        .then((res) => {
+          this.response = res.data;
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
+          // call again if fail? why?
           this.getTech();
         });
     },
     // eslint-disable-next-line
     removeEntry(tech_id) {
-      const path = this.delete_tech_path + tech_id; // eslint-disable-line
-      axios.delete(path)
+      const path = this.delete_tech_path; // eslint-disable-line
+      const payload = { technology_id: tech_id };
+      axios.put(path, payload)
         .then((response) => {
-          if (response.data.status) {
+          if (response.data.status === 'fail') {
             this.showMessage = true;
           } else {
             this.showMessage = false;
           }
-          console.log(response.data.status);
-          this.getTech();
+          this.response = response.data;
         })
         .catch((error) => {
           console.error(error);
-          console.log('Bing bong bing there was a pwoblem');
+          // call again if fail? why?
           this.getTech();
         });
     },

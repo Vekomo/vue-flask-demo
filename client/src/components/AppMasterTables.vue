@@ -201,8 +201,12 @@ export default {
     addApp(payload) {
       const path = this.add_app_path;
       axios.post(path, payload)
-        .then(() => {
-          this.getApp();
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -250,18 +254,23 @@ export default {
       const payload = {
         technology_id: this.tech_map[this.editForm.technology_id],
         App_technology_name: this.editForm.old_name,
+        New_App_name: this.editForm.name,
         App_tech_dependant_tags: this.editForm.tags,
         App_tech_description: this.editForm.description,
       };
-      this.updateApp(payload, this.editForm.name);
+      this.updateApp(payload);
     },
     // eslint-disable-next-line
     updateApp(payload, app_name) {
 
-      const path = this.update_app_path + app_name; // eslint-disable-line
+      const path = this.update_app_path; // eslint-disable-line
       axios.put(path, payload)
-        .then(() => {
-          this.getApp();
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -270,11 +279,16 @@ export default {
         });
     },
     // eslint-disable-next-line
-    removeEntry(app_name) {
-      const path = this.delete_app_path + app_name; // eslint-disable-line
-      axios.delete(path)
-        .then(() => {
-          this.getApp();
+    removeEntry(app_name_delete) {
+      const path = this.delete_app_path; // eslint-disable-line
+      const payload = { app_name: app_name_delete };
+      axios.put(path, payload)
+        .then((res) => {
+          this.response = res.data;
+
+          for (let i = 0; i < this.response.length; i += 1) {
+            this.response[i].technology_id = this.display_map[this.response[i].technology_id];
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
