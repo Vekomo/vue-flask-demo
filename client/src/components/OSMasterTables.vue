@@ -205,7 +205,7 @@ export default {
       axios.post(path, payload)
         .then((res) => {
           this.response = res.data;
-
+          console.log(res.data.technology_id);
           for (let i = 0; i < this.response.length; i += 1) {
             this.response[i].technology_id = this.display_map[this.response[i].technology_id];
           }
@@ -305,6 +305,7 @@ export default {
   created() {
     this.getTechId();
     this.getOS();
+
     console.log('Succesful.');
   },
 };

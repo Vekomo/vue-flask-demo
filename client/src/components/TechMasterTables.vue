@@ -60,19 +60,25 @@
       <b-form-group id="form-tech-name-group"
                     label="Tech_name:"
                     label-for="form-tech-name-input">
+                    <p v-if='nameError == 0'>
+                      <b> Name error: Max length 50 characters.</b>
+                    </p>
+                    <p v-if='nameError == 1'>
+                      <b> Name error: Name required.</b>
+                    </p>
           <b-form-input id="form-tech-name-input"
                          type="text"
-                         required
-                         maxlength=50
                          v-model="addForm.name">
                        </b-form-input>
       </b-form-group>
       <b-form-group id="form-tech-tags-group"
                     label="Tech_tags:"
                     label-for="form-tech-tags-input">
+                    <p v-if='tagError == 0'>
+                      <b> Tag error: Tag required.</b>
+                    </p>
           <b-form-input id="form-tech-tags-input"
                          type="text"
-                         required
                          maxlength=2000
                          v-model="addForm.tags">
                        </b-form-input>
@@ -80,9 +86,11 @@
       <b-form-group id="form-stack-decription-group"
                     label="stack_description:"
                     label-for="form-stack_description-input">
+                    <p v-if='descriptionError == 0'>
+                      <b> Description error: Description required.</b>
+                    </p>
           <b-form-input id="form-stack-description-input"
                          type="text"
-                         required
                          maxlength=500
                          v-model="addForm.description">
                        </b-form-input>
@@ -124,6 +132,7 @@
                     type="text"
                     v-model="editForm.description"
                     required
+                    value="What"
                     maxlength=500
                     placeholder="Enter description">
       </b-form-input>
@@ -146,6 +155,9 @@ export default {
   mixins: [PathMixins],
   data() {
     return {
+      nameError: -1,
+      tagError: -1,
+      descriptionError: -1,
       response: [],
       addForm: {
         name: '',
@@ -187,6 +199,32 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault();
+
+      if (this.addForm.name.length > 50) {
+        this.nameError = 0;
+        // eslint-disable-next-line
+      } else if (this.addForm.name.length < 1) {
+        this.nameError = 1;
+      } else {
+        this.nameError = -1;
+      }
+      if (this.addForm.tags.length < 1) {
+        this.tagError = 0;
+        // eslint-disable-next-line
+      } else {
+        this.tagError = -1;
+      }
+      if (this.addForm.description.length < 1) {
+        this.descriptionError = 0;
+        // eslint-disable-next-line
+      } else {
+        this.descriptionError = -1;
+      }
+
+      if (this.descriptionError > -1 || this.nameError > -1 || this.tagError > -1) {
+        return;
+      }
+
       this.$refs.addTechModal.hide();
       const payload = {
         technology_name: this.addForm.name,
@@ -235,8 +273,8 @@ export default {
             this.showMessage = true;
           } else {
             this.showMessage = false;
+            this.response = response.data;
           }
-          this.response = response.data;
         })
         .catch((error) => {
           console.error(error);
