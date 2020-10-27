@@ -103,13 +103,15 @@ def delete_tech_master():
         return jsonify({'status': 'fail'})
         return(str(e))
 '''
-@app.route("/get_tech_master_raw", methods=['GET'])
+@app.route("/tech-masters", methods=['GET'])
 def get_tech_master_raw():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
-
-    cur.execute("""SELECT * FROM "Technology_Master" """)
-    records = cur.fetchall()
+    try:
+        cur.execute("""SELECT * FROM "Technology_Master" """)
+        records = cur.fetchall()
+    except Exception as e:
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     result = []
     for row in records:
         result.append({
@@ -120,9 +122,10 @@ def get_tech_master_raw():
         })
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
+    #return jsonify(result)
 
-@app.route("/add_tech_raw", methods=['POST'])
+@app.route("/tech-masters", methods=['POST'])
 def add_tech():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
@@ -132,10 +135,15 @@ def add_tech():
     technology_name=post_data.get('technology_name')
     tech_dependant_tags=post_data.get('tech_dependant_tags')
     stack_description=post_data.get('stack_description')
-    cur.execute("""INSERT INTO
-    "Technology_Master"(technology_name,tech_dependant_tags,stack_description)
-    VALUES('"""+technology_name +"""','"""+tech_dependant_tags+"""','"""+stack_description + """'); """)
-    cur.execute("""SELECT * FROM "Technology_Master" """)
+    try:
+        cur.execute("""INSERT INTO
+        "Technology_Master"(technology_name,tech_dependant_tags,stack_description)
+        VALUES('"""+technology_name +"""','"""+tech_dependant_tags+"""','"""+stack_description + """'); """)
+        cur.execute("""SELECT * FROM "Technology_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -147,9 +155,9 @@ def add_tech():
         })
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 201, 'data': result, 'message': 'Success.'})
 
-@app.route("/update_tech_raw", methods=['PUT'])
+@app.route("/tech-masters", methods=['PUT'])
 def update_tech_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
@@ -159,13 +167,18 @@ def update_tech_master():
     technology_name=post_data.get('technology_name')
     tech_dependant_tags=post_data.get('tech_dependant_tags')
     stack_description=post_data.get('stack_description')
-    cur.execute("""UPDATE "Technology_Master"
-                    SET technology_name = '""" + technology_name + """', """ +
-                        """ tech_dependant_tags = '""" + tech_dependant_tags + """ ', """ +
-                        """ stack_description = '""" + stack_description + """'""" +
-                        """ WHERE technology_id = """ + str(tech_id) + """;""")
+    try:
+        cur.execute("""UPDATE "Technology_Master"
+                        SET technology_name = '""" + technology_name + """', """ +
+                            """ tech_dependant_tags = '""" + tech_dependant_tags + """ ', """ +
+                            """ stack_description = '""" + stack_description + """'""" +
+                            """ WHERE technology_id = """ + str(tech_id) + """;""")
 
-    cur.execute("""SELECT * FROM "Technology_Master" """)
+        cur.execute("""SELECT * FROM "Technology_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -178,9 +191,9 @@ def update_tech_master():
 
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
-@app.route("/delete_tech_raw", methods=['PUT'])
+@app.route("/tech-master-entries", methods=['PUT'])
 def delete_tech_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
@@ -191,7 +204,8 @@ def delete_tech_master():
         cur.execute("""DELETE  FROM "Technology_Master" WHERE technology_id = '""" + str(tech_id) + """';""")
     except Exception as e:
         conn.rollback()
-        return jsonify({'status': 'fail'})
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     cur.execute("""SELECT * FROM "Technology_Master" """)
     records = cur.fetchall()
     result = []
@@ -205,15 +219,18 @@ def delete_tech_master():
 
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
 # ||||||||||| OS_TECH_MASTER ||||||||||||||||||||||||||||||||||||||||||||||||||
-@app.route("/get_os_master_raw", methods=['GET'])
+@app.route("/os-masters", methods=['GET'])
 def get_os_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
-
-    cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+    try:
+        cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+    except Exception as e:
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -226,9 +243,9 @@ def get_os_master():
 
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
-@app.route("/add_os_raw", methods=['POST'])
+@app.route("/os-masters", methods=['POST'])
 def add_os():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
@@ -239,10 +256,15 @@ def add_os():
     OS_technology_name=post_data.get('OS_technology_name')
     OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
     OS_tech_description=post_data.get('OS_tech_description')
-    cur.execute("""INSERT INTO
-    "OS_Tech_Master"(technology_id,"OS_technology_name","OS_tech_dependant_tags","OS_tech_description")
-    VALUES("""+ str(technology_id) + """,'""" + OS_technology_name +"""','"""+ OS_tech_dependant_tags +"""','"""+ OS_tech_description + """'); """)
-    cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+    try:
+        cur.execute("""INSERT INTO
+        "OS_Tech_Master"(technology_id,"OS_technology_name","OS_tech_dependant_tags","OS_tech_description")
+        VALUES("""+ str(technology_id) + """,'""" + OS_technology_name +"""','"""+ OS_tech_dependant_tags +"""','"""+ OS_tech_description + """'); """)
+        cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -255,9 +277,9 @@ def add_os():
 
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 201, 'data': result, 'message': 'Success.'})
 
-@app.route("/update_os_raw", methods=['PUT'])
+@app.route("/os-masters", methods=['PUT'])
 def update_os_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
@@ -268,15 +290,19 @@ def update_os_master():
     OS_tech_description=post_data.get('OS_tech_description')
     technology_id=post_data.get('technology_id')
     New_OS_name = post_data.get('New_OS_name')
+    try:
+        cur.execute("""UPDATE "OS_Tech_Master"
+                        SET "OS_technology_name" = '""" + New_OS_name + """', """ +
+                            """ "OS_tech_dependant_tags" = '""" + OS_tech_dependant_tags + """ ', """ +
+                            """ "OS_tech_description" = '""" + OS_tech_description + """', """ +
+                            """ technology_id = '""" + str(technology_id) + """' """ +
+                            """ WHERE "OS_technology_name" = '""" + OS_technology_name + """';""")
 
-    cur.execute("""UPDATE "OS_Tech_Master"
-                    SET "OS_technology_name" = '""" + New_OS_name + """', """ +
-                        """ "OS_tech_dependant_tags" = '""" + OS_tech_dependant_tags + """ ', """ +
-                        """ "OS_tech_description" = '""" + OS_tech_description + """', """ +
-                        """ technology_id = '""" + str(technology_id) + """' """ +
-                        """ WHERE "OS_technology_name" = '""" + OS_technology_name + """';""")
-
-    cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+        cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -289,19 +315,23 @@ def update_os_master():
 
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
-@app.route("/delete_os_raw", methods=['PUT'])
+@app.route("/os-master-entries", methods=['PUT'])
 def delete_os_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
 
     post_data = request.get_json()
     os_name = post_data.get('os_name')
+    try:
+        cur.execute("""DELETE  FROM "OS_Tech_Master" WHERE "OS_technology_name" = '""" + os_name + """';""")
 
-    cur.execute("""DELETE  FROM "OS_Tech_Master" WHERE "OS_technology_name" = '""" + os_name + """';""")
-
-    cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+        cur.execute("""SELECT * FROM "OS_Tech_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -314,7 +344,7 @@ def delete_os_master():
 
     conn.commit()
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
 '''
 @app.route("/get_os_master", methods=['GET'])
@@ -394,12 +424,16 @@ def get_data_master():
     except Exception as e:
 	    return(str(e))
 '''
-@app.route("/get_data_master_raw", methods=['GET'])
+@app.route("/data-masters", methods=['GET'])
 def get_data_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
-
-    cur.execute("""SELECT * FROM "Data_Tech_Master" """)
+    try:
+        cur.execute("""SELECT * FROM "Data_Tech_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -411,9 +445,9 @@ def get_data_master():
         })
 
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
-@app.route("/add_data", methods=['POST'])
+@app.route("/data-masters", methods=['POST'])
 def add_data():
     post_data = request.get_json()
     technology_id=post_data.get('technology_id')
@@ -430,12 +464,13 @@ def add_data():
         db.session.add(data_tech_master)
         db.session.commit()
         techs=Data_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
+        return jsonify({'status': 201, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        print(str(e))
-        return(str(e))
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
 
-@app.route("/update_data", methods=['PUT'])
+@app.route("/data-masters", methods=['PUT'])
 def update_data_master():
     post_data = request.get_json()
     Data_technology_name = post_data.get('Data_technology_name')
@@ -451,12 +486,12 @@ def update_data_master():
         techs.Data_tech_description = Data_tech_description
         db.session.commit()
         techs=Data_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
+        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        print(str(e))
-        return(str(e))
-
-@app.route("/delete_data", methods=['PUT'])
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+@app.route("/data-master-entries", methods=['PUT'])
 def delete_data_master():
     post_data = request.get_json()
     data_name = post_data.get('data_name')
@@ -465,17 +500,23 @@ def delete_data_master():
         db.session.delete(techs)
         db.session.commit()
         techs=Data_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
+        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        return(str(e))
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
 
 # ||||||||||| APP_TECH_MASTER |||||||||||||||||||||||||||||||||||||||||||||||||
-@app.route("/get_app_master_raw", methods=['GET'])
+@app.route("/app-masters", methods=['GET'])
 def get_app_master():
     conn = psycopg.connect("dbname=tech_db user=stylo")
     cur = conn.cursor()
-
-    cur.execute("""SELECT * FROM "App_Tech_Master" """)
+    try:
+        cur.execute("""SELECT * FROM "App_Tech_Master" """)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
     records = cur.fetchall()
     result = []
     for row in records:
@@ -487,7 +528,7 @@ def get_app_master():
         })
 
     conn.close()
-    return jsonify(result)
+    return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 '''
 @app.route("/get_app_master", methods=['GET'])
 def get_app_master():
@@ -497,7 +538,7 @@ def get_app_master():
     except Exception as e:
 	    return(str(e))
 '''
-@app.route("/add_app", methods=['POST'])
+@app.route("/app-masters", methods=['POST'])
 def add_app():
     post_data = request.get_json()
     technology_id=post_data.get('technology_id')
@@ -514,12 +555,13 @@ def add_app():
         db.session.add(app_tech_master)
         db.session.commit()
         techs=App_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
+        return jsonify({'status': 201, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        print(str(e))
-        return(str(e))
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
 
-@app.route("/update_app", methods=['PUT'])
+@app.route("/app-masters", methods=['PUT'])
 def update_app_master():
     post_data = request.get_json()
     App_technology_name = post_data.get('App_technology_name')
@@ -535,12 +577,13 @@ def update_app_master():
         techs.App_tech_description = App_tech_description
         db.session.commit()
         techs=App_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
+        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        print(str(e))
-        return(str(e))
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
 
-@app.route("/delete_app", methods=['PUT'])
+@app.route("/app-master-entries", methods=['PUT'])
 def delete_app_master():
     post_data = request.get_json()
     app_name = post_data.get('app_name')
@@ -549,9 +592,11 @@ def delete_app_master():
         db.session.delete(techs)
         db.session.commit()
         techs=App_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
+        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        return(str(e))
+        conn.rollback()
+        conn.close()
+        return {'status': 500, 'data': {}, 'message': 'Failure.'}
 
 
 

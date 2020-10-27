@@ -188,7 +188,7 @@ export default {
       const path = this.get_data_path;
       axios.get(path)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
 
           for (let i = 0; i < this.response.length; i += 1) {
             this.response[i].technology_id = this.display_map[this.response[i].technology_id];
@@ -203,7 +203,7 @@ export default {
       const path = this.add_data_path;
       axios.post(path, payload)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
 
           for (let i = 0; i < this.response.length; i += 1) {
             this.response[i].technology_id = this.display_map[this.response[i].technology_id];
@@ -227,23 +227,15 @@ export default {
       this.addData(payload);
     },
     getTechId() {
-      const path = this.get_tech_path;
-      axios.get(path)
-        .then((res) => {
-          this.tech_id = res.data;
-          let i;
-          for (i = 0; i < this.tech_id.length; i += 1) {
-            if (!this.tech.includes(this.tech_id[i].technology_id)) {
-              this.tech.push(this.tech_id[i].technology_name);
-              this.tech_map[this.tech_id[i].technology_name] = this.tech_id[i].technology_id;
-              this.display_map[this.tech_id[i].technology_id] = this.tech_id[i].technology_name;
-            }
-          }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
+      this.tech_id = JSON.parse(localStorage.getItem('tech_response'));
+      let i;
+      for (i = 0; i < this.tech_id.length; i += 1) {
+        if (!this.tech.includes(this.tech_id[i].technology_id)) {
+          this.tech.push(this.tech_id[i].technology_name);
+          this.tech_map[this.tech_id[i].technology_name] = this.tech_id[i].technology_id;
+          this.display_map[this.tech_id[i].technology_id] = this.tech_id[i].technology_name;
+        }
+      }
     },
     editData(entry) {
       this.editForm = entry;
@@ -267,7 +259,7 @@ export default {
       const path = this.update_data_path; // eslint-disable-line
       axios.put(path, payload)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
 
           for (let i = 0; i < this.response.length; i += 1) {
             this.response[i].technology_id = this.display_map[this.response[i].technology_id];
@@ -285,7 +277,7 @@ export default {
       const payload = { data_name: data_name_delete };
       axios.put(path, payload)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
 
           for (let i = 0; i < this.response.length; i += 1) {
             this.response[i].technology_id = this.display_map[this.response[i].technology_id];

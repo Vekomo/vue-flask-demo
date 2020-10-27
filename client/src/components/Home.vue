@@ -22,17 +22,40 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
+import PathMixins from '../mixins/pathMixins';
+
 export default {
+  mixins: [PathMixins],
   data() {
     return {
       response: [],
     };
   },
   methods: {
-
+    getTech() {
+      const path = this.get_tech_path;
+      axios.get(path)
+        .then((res) => {
+          this.response = res.data.data;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error);
+        });
+    },
   },
   created() {
+    this.getTech();
     console.log('Succesful.');
+  },
+  watch: {
+    response: {
+      handler() {
+        console.log('App detected change!');
+        localStorage.setItem('tech_response', JSON.stringify(this.response));
+      },
+    },
   },
 };
 </script>

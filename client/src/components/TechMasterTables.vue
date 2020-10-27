@@ -179,7 +179,7 @@ export default {
       const path = this.get_tech_path;
       axios.get(path)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -190,7 +190,7 @@ export default {
       const path = this.add_tech_path;
       axios.post(path, payload)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
         })
         .catch((error) => {
           console.log(error);
@@ -254,7 +254,7 @@ export default {
       const path = this.update_tech_path; // eslint-disable-line
       axios.put(path, payload)
         .then((res) => {
-          this.response = res.data;
+          this.response = res.data.data;
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -269,11 +269,11 @@ export default {
       const payload = { technology_id: tech_id };
       axios.put(path, payload)
         .then((response) => {
-          if (response.data.status === 'fail') {
+          if (response.data.status === 500) {
             this.showMessage = true;
           } else {
             this.showMessage = false;
-            this.response = response.data;
+            this.response = response.data.data;
           }
         })
         .catch((error) => {
@@ -289,6 +289,14 @@ export default {
   created() {
     this.getTech();
     console.log('Succesful.');
+  },
+  watch: {
+    response: {
+      handler() {
+        console.log('Data changed.');
+        localStorage.setItem('tech_response', JSON.stringify(this.response));
+      },
+    },
   },
   components: {
     alert: Alert,

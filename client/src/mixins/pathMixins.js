@@ -2,25 +2,25 @@ export default {
   data() {
     return {
       // Tech Master Paths
-      get_tech_path: 'http://localhost:5000/get_tech_master_raw',
-      add_tech_path: 'http://127.0.0.1:5000/add_tech_raw',
-      update_tech_path: 'http://localhost:5000/update_tech_raw',
-      delete_tech_path: 'http://localhost:5000/delete_tech_raw',
+      get_tech_path: 'http://localhost:5000/tech-masters',
+      add_tech_path: 'http://127.0.0.1:5000/tech-masters',
+      update_tech_path: 'http://localhost:5000/tech-masters',
+      delete_tech_path: 'http://localhost:5000/tech-master-entries',
       // Data Master Paths
-      get_data_path: 'http://localhost:5000/get_data_master_raw',
-      add_data_path: 'http://127.0.0.1:5000/add_data',
-      update_data_path: 'http://localhost:5000/update_data',
-      delete_data_path: 'http://localhost:5000/delete_data',
+      get_data_path: 'http://localhost:5000/data-masters',
+      add_data_path: 'http://127.0.0.1:5000/data-masters',
+      update_data_path: 'http://localhost:5000/data-masters',
+      delete_data_path: 'http://localhost:5000/data-master-entries',
       // OS Master Paths
-      get_os_path: 'http://localhost:5000/get_os_master_raw',
-      add_os_path: 'http://127.0.0.1:5000/add_os_raw',
-      update_os_path: 'http://localhost:5000/update_os_raw',
-      delete_os_path: 'http://localhost:5000/delete_os_raw',
+      get_os_path: 'http://localhost:5000/os-masters',
+      add_os_path: 'http://127.0.0.1:5000/os-masters',
+      update_os_path: 'http://localhost:5000/os-masters',
+      delete_os_path: 'http://localhost:5000/os-master-entries',
       // App Master Paths
-      get_app_path: 'http://localhost:5000/get_app_master_raw',
-      add_app_path: 'http://127.0.0.1:5000/add_app',
-      update_app_path: 'http://localhost:5000/update_app',
-      delete_app_path: 'http://localhost:5000/delete_app',
+      get_app_path: 'http://localhost:5000/app-masters',
+      add_app_path: 'http://127.0.0.1:5000/app-masters',
+      update_app_path: 'http://localhost:5000/app-masters',
+      delete_app_path: 'http://localhost:5000/app-master-entries',
 
     };
   },
