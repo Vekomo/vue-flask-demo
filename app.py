@@ -111,7 +111,7 @@ def get_tech_master_raw():
         cur.execute("""SELECT * FROM "Technology_Master" """)
         records = cur.fetchall()
     except Exception as e:
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     result = []
     for row in records:
         result.append({
@@ -131,7 +131,6 @@ def add_tech():
     cur = conn.cursor()
 
     post_data = request.get_json()
-    print(post_data)
     technology_name=post_data.get('technology_name')
     tech_dependant_tags=post_data.get('tech_dependant_tags')
     stack_description=post_data.get('stack_description')
@@ -143,7 +142,7 @@ def add_tech():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -178,7 +177,7 @@ def update_tech_master():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -205,7 +204,7 @@ def delete_tech_master():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     cur.execute("""SELECT * FROM "Technology_Master" """)
     records = cur.fetchall()
     result = []
@@ -230,7 +229,7 @@ def get_os_master():
         cur.execute("""SELECT * FROM "OS_Tech_Master" """)
     except Exception as e:
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -251,7 +250,6 @@ def add_os():
     cur = conn.cursor()
 
     post_data = request.get_json()
-    print(post_data)
     technology_id=post_data.get('technology_id')
     OS_technology_name=post_data.get('OS_technology_name')
     OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
@@ -264,7 +262,7 @@ def add_os():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -302,7 +300,7 @@ def update_os_master():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -331,7 +329,7 @@ def delete_os_master():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -346,73 +344,7 @@ def delete_os_master():
     conn.close()
     return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
-'''
-@app.route("/get_os_master", methods=['GET'])
-def get_os_master():
-    try:
-        techs=OS_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
-    except Exception as e:
-	    return(str(e))
 
-@app.route("/add_os", methods=['POST'])
-def add_os():
-    post_data = request.get_json()
-    print(post_data)
-    technology_id=post_data.get('technology_id')
-    OS_technology_name=post_data.get('OS_technology_name')
-    OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
-    OS_tech_description=post_data.get('OS_tech_description')
-    try:
-        os_tech_master=OS_Tech_Master(
-            technology_id=technology_id,
-            OS_technology_name=OS_technology_name,
-            OS_tech_dependant_tags=OS_tech_dependant_tags,
-            OS_tech_description=OS_tech_description
-        )
-        db.session.add(os_tech_master)
-        db.session.commit()
-        techs=OS_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
-        #return "OS added to OS_Tech_Master via add_os! OS technology_id={}".format(OS_Tech_Master.technology_id)
-    except Exception as e:
-        print(str(e))
-        return(str(e))
-
-@app.route("/update_os", methods=['PUT'])
-def update_os_master():
-    post_data = request.get_json()
-    OS_technology_name = post_data.get('OS_technology_name')
-    OS_tech_dependant_tags=post_data.get('OS_tech_dependant_tags')
-    OS_tech_description=post_data.get('OS_tech_description')
-    technology_id=post_data.get('technology_id')
-    New_OS_name = post_data.get('New_OS_name')
-    techs=OS_Tech_Master.query.filter_by(OS_technology_name=OS_technology_name).first()
-    try:
-        techs.technology_id = technology_id
-        techs.OS_technology_name = New_OS_name
-        techs.OS_tech_dependant_tags = OS_tech_dependant_tags
-        techs.OS_tech_description = OS_tech_description
-        db.session.commit()
-        techs=OS_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
-    except Exception as e:
-        print(str(e))
-        return(str(e))
-
-@app.route("/delete_os", methods=['PUT'])
-def delete_os_master():
-    post_data = request.get_json()
-    os_name = post_data.get('os_name')
-    techs=OS_Tech_Master.query.filter_by(OS_technology_name=os_name).first()
-    try:
-        db.session.delete(techs)
-        db.session.commit()
-        techs=OS_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
-    except Exception as e:
-        return(str(e))
-'''
 
 # ||||||||||| DATA_TECH_MASTER ||||||||||||||||||||||||||||||||||||||||||||||||
 '''
@@ -433,7 +365,7 @@ def get_data_master():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -443,7 +375,6 @@ def get_data_master():
         "Data_tech_dependant_tags" : row[2],
         "Data_tech_description":row[3]
         })
-
     conn.close()
     return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
 
@@ -463,12 +394,11 @@ def add_data():
         )
         db.session.add(data_tech_master)
         db.session.commit()
-        techs=Data_Tech_Master.query.all()
-        return jsonify({'status': 201, 'data': result, 'message': 'Success.'})
     except Exception as e:
-        conn.rollback()
-        conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
+
+    result=Data_Tech_Master.query.all()
+    return jsonify({'status': 200, 'data': [e.serialize() for e in result], 'message': 'Success.'})
 
 @app.route("/data-masters", methods=['PUT'])
 def update_data_master():
@@ -485,12 +415,10 @@ def update_data_master():
         techs.Data_tech_dependant_tags = Data_tech_dependant_tags
         techs.Data_tech_description = Data_tech_description
         db.session.commit()
-        techs=Data_Tech_Master.query.all()
-        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
+        result=Data_Tech_Master.query.all()
+        return jsonify({'status': 200, 'data': [e.serialize() for e in result], 'message': 'Success.'})
     except Exception as e:
-        conn.rollback()
-        conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
 @app.route("/data-master-entries", methods=['PUT'])
 def delete_data_master():
     post_data = request.get_json()
@@ -499,12 +427,10 @@ def delete_data_master():
     try:
         db.session.delete(techs)
         db.session.commit()
-        techs=Data_Tech_Master.query.all()
-        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
+        result=Data_Tech_Master.query.all()
+        return jsonify({'status': 200, 'data': [e.serialize() for e in result], 'message': 'Success.'})
     except Exception as e:
-        conn.rollback()
-        conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
 
 # ||||||||||| APP_TECH_MASTER |||||||||||||||||||||||||||||||||||||||||||||||||
 @app.route("/app-masters", methods=['GET'])
@@ -516,7 +442,7 @@ def get_app_master():
     except Exception as e:
         conn.rollback()
         conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
     records = cur.fetchall()
     result = []
     for row in records:
@@ -529,15 +455,7 @@ def get_app_master():
 
     conn.close()
     return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
-'''
-@app.route("/get_app_master", methods=['GET'])
-def get_app_master():
-    try:
-        techs=App_Tech_Master.query.all()
-        return  jsonify([e.serialize() for e in techs])
-    except Exception as e:
-	    return(str(e))
-'''
+
 @app.route("/app-masters", methods=['POST'])
 def add_app():
     post_data = request.get_json()
@@ -554,12 +472,10 @@ def add_app():
         )
         db.session.add(app_tech_master)
         db.session.commit()
-        techs=App_Tech_Master.query.all()
-        return jsonify({'status': 201, 'data': result, 'message': 'Success.'})
+        result=App_Tech_Master.query.all()
+        return jsonify({'status': 201, 'data': [e.serialize() for e in result], 'message': 'Success.'})
     except Exception as e:
-        conn.rollback()
-        conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
 
 @app.route("/app-masters", methods=['PUT'])
 def update_app_master():
@@ -576,27 +492,23 @@ def update_app_master():
         techs.App_tech_dependant_tags = App_tech_dependant_tags
         techs.App_tech_description = App_tech_description
         db.session.commit()
-        techs=App_Tech_Master.query.all()
-        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
+        result=App_Tech_Master.query.all()
+        return jsonify({'status': 200, 'data': [e.serialize() for e in result], 'message': 'Success.'})
     except Exception as e:
-        conn.rollback()
-        conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
 
 @app.route("/app-master-entries", methods=['PUT'])
 def delete_app_master():
     post_data = request.get_json()
     app_name = post_data.get('app_name')
-    techs=App_Tech_Master.query.filter_by(App_technology_name=app_name).first()
+    result=App_Tech_Master.query.filter_by(App_technology_name=app_name).first()
     try:
-        db.session.delete(techs)
+        db.session.delete(result)
         db.session.commit()
-        techs=App_Tech_Master.query.all()
-        return jsonify({'status': 200, 'data': result, 'message': 'Success.'})
+        result=App_Tech_Master.query.all()
+        return jsonify({'status': 200, 'data': [e.serialize() for e in result], 'message': 'Success.'})
     except Exception as e:
-        conn.rollback()
-        conn.close()
-        return {'status': 500, 'data': {}, 'message': 'Failure.'}
+        return jsonify({'status': 500, 'data': [], 'message': 'Failure.'})
 
 
 
