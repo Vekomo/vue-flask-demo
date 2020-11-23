@@ -52,6 +52,7 @@
       <vs-prompt
       title='New entry'
       :active.sync='activePrompt'
+      :is-valid='validAddPrompt'
       @accept='onSubmit'>
         <vs-select
           label='Technology Name'
@@ -62,9 +63,15 @@
           :text='item'
           v-for='item,index in tech' />
         </vs-select>
-        <vs-input label='Name' placeholder ='Name' v-model='addForm.name'/>
-        <vs-input label='Tags' placeholder ='Tags' v-model='addForm.tags'/>
-        <vs-input label='Description' placeholder ='Description' v-model='addForm.description'/>
+        <vs-input label='Name' placeholder ='Name' v-model='addForm.name'
+        :success='nameSucc' success-text='Valid name.'
+        :danger='!nameSucc' danger-text='Name must be nonempty and be no more than 50 characters.'/>
+        <vs-input label='Tags' placeholder ='Tags' v-model='addForm.tags'
+        :success='tagSucc' success-text='Valid tag.'
+        :danger='!tagSucc' danger-text='Tags must begin with a "#".'/>
+        <vs-input label='Description' placeholder ='Description' v-model='addForm.description'
+        :success='descriptionSucc' success-text='Valid description.'
+        :danger='!descriptionSucc' danger-text='Description must be nonempty and be no more than 500 characters.'/>
       </vs-prompt>
       <vs-prompt
       title='Edit entry'
@@ -96,12 +103,17 @@ export default {
     return {
       activePrompt: false,
       editPrompt: false,
+      nameSucc: false,
+      tagSucc: false,
+      descriptionSucc: false,
+      idSucc: false,
       response: [],
       tech_id: [],
       tech_keys: [],
       tech_map: {},
       display_map: {},
       addForm: {
+        id: null,
         name: '',
         tags: '',
         description: '',
@@ -116,7 +128,43 @@ export default {
       tech: [],
     };
   },
+  computed:{
+    validAddPrompt(){
+      if(this.addForm.id != null) {
+        this.idSucc = true;
+      } else {
+        this.idSucc = false;
+      }
+      if(this.addForm.name.length > 0 && this.addForm.name.length < 50) {
+        this.nameSucc = true;
+      } else {
+        this.nameSucc = false;
+      }
+      if(this.isValidTag(this.addForm.tags) && this.addForm.tags.length < 2000) {
+        this.tagSucc = true;
+      } else {
+        this.tagSucc = false;
+      }
+      if(this.addForm.description.length > 0 && this.addForm.description.length < 500) {
+        this.descriptionSucc = true;
+      } else {
+        this.descriptionSucc = false;
+      }
+      if(this.descriptionSucc && this.nameSucc && this.tagSucc && this.idSucc) {
+        return true;
+      } else {
+        return false;
+      }
+    }, //eofunction
+  },
   methods: {
+    isValidTag(tag) {
+      let re = new RegExp('(([\#])([A-z])+(\,)*)+');
+      if (tag === '') {
+        return false;
+      }
+      return re.test(tag);
+    },
     getData() {
       const path = this.get_data_path;
       axios.get(path)

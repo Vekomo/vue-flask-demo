@@ -1,6 +1,6 @@
 <template>
-	<vs-row vs-justify="center">
-  <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="3">
+	<vs-row vs-justify="space-around" >
+  <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="2.75">
     <vs-card>
       <div slot="header">
         <h3>
@@ -12,12 +12,12 @@
       </div>
 			<div slot="footer">
         <vs-row vs-justify="flex-end">
-          <vs-button type="gradient" color="danger" to="/techTables">TECH</vs-button>
+          <vs-button type="flat" color="danger" to="/techTables">CLICK</vs-button>
         </vs-row>
       </div>
     </vs-card>
 	 </vs-col>
-	 <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="3">
+	 <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="2.75">
 		<vs-card>
       <div slot="header">
         <h3>
@@ -29,12 +29,12 @@
       </div>
 			<div slot="footer">
         <vs-row vs-justify="flex-end">
-          <vs-button type="gradient" color="danger" to="/dataTables">DATA</vs-button>
+          <vs-button type="flat" color="danger" to="/dataTables">CLICK</vs-button>
         </vs-row>
       </div>
     </vs-card>
 	</vs-col>
-	<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="3">
+	<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="2.75">
 		<vs-card>
       <div slot="header">
         <h3>
@@ -46,12 +46,12 @@
       </div>
 			<div slot="footer">
         <vs-row vs-justify="flex-end">
-          <vs-button type="gradient" color="danger" to="/appTables">APP</vs-button>
+          <vs-button type="flat" color="danger" to="/appTables">CLICK</vs-button>
         </vs-row>
       </div>
     </vs-card>
 	</vs-col>
-	<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="3">
+	<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="2.75">
 		<vs-card>
       <div slot="header">
         <h3>
@@ -63,7 +63,7 @@
       </div>
 			<div slot="footer">
         <vs-row vs-justify="flex-end">
-          <vs-button type="gradient" color="danger" to="/osTables">OS</vs-button>
+          <vs-button type="flat" color="danger" to="/osTables">CLICK</vs-button>
         </vs-row>
       </div>
     </vs-card>

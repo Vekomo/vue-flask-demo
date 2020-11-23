@@ -52,18 +52,31 @@
       <vs-prompt
       title='New entry'
       :active.sync='activePrompt'
+      :is-valid='validAddPrompt'
       @accept='onSubmit'>
-        <vs-input label='Name' placeholder ='Name' v-model='addForm.name'/>
-        <vs-input label='Tags' placeholder ='Tags' v-model='addForm.tags'/>
-        <vs-input label='Description' placeholder ='Description' v-model='addForm.description'/>
+        <vs-input label='Name' placeholder ='Name' v-model='addForm.name'
+          :success='nameSucc' success-text='Valid name.'
+          :danger='!nameSucc' danger-text='Name must be nonempty and be no more than 50 characters.'/>
+        <vs-input label='Tags' placeholder ='Tags' v-model='addForm.tags'
+          :success='tagSucc' success-text='Valid tag.'
+          :danger='!tagSucc' danger-text='Tags must begin with a "#".'/>
+        <vs-input label='Description' placeholder ='Description' v-model='addForm.description'
+          :success='descriptionSucc' success-text='Valid description.'
+          :danger='!descriptionSucc' danger-text='Description must be nonempty and be no more than 500 characters.'/>
       </vs-prompt>
       <vs-prompt
       title='Edit entry'
       :active.sync='editPrompt'
       @accept='onSubmitUpdate'>
-        <vs-input label='Name' v-model='editForm.name'/>
-        <vs-input label='Tags' v-model='editForm.tags'/>
-        <vs-input label='Description' v-model='editForm.description'/>
+        <vs-input label='Name' v-model='editForm.name'
+        :success='nameSucc' success-text='Valid name.'
+        :danger='!nameSucc' danger-text='Name must be nonempty and be no more than 50 characters.'/>
+        <vs-input label='Tags' v-model='editForm.tags'
+        :success='tagSucc' success-text='Valid tag.'
+        :danger='!tagSucc' danger-text='Tags must begin with a "#".'/>
+        <vs-input label='Description' v-model='editForm.description'
+        :success='descriptionSucc' success-text='Valid description.'
+        :danger='!descriptionSucc' danger-text='Description must be nonempty and be no more than 500 characters.'/>
       </vs-prompt>
     </div>
 </template>
@@ -79,9 +92,9 @@ export default {
     return {
       activePrompt: false,
       editPrompt: false,
-      nameError: false,
-      tagError: false,
-      descriptionError: false,
+      nameSucc: false,
+      tagSucc: false,
+      descriptionSucc: false,
       response: [],
       addForm: {
         name: '',
@@ -90,14 +103,45 @@ export default {
       },
       editForm: {
         technology_id: null,
-        name: '',
-        tags: '',
-        description: '',
+        technology_name: '',
+        tech_dependant_tags: '',
+        stack_description: '',
       },
       message: 'Cannot delete entry, technology name used in child table.',
     };
   },
+  computed:{
+    validAddPrompt(){
+      if(this.addForm.name.length > 0 && this.addForm.name.length < 50) {
+        this.nameSucc = true;
+      } else {
+        this.nameSucc = false;
+      }
+      if(this.isValidTag(this.addForm.tags) && this.addForm.tags.length < 2000) {
+        this.tagSucc = true;
+      } else {
+        this.tagSucc = false;
+      }
+      if(this.addForm.description.length > 0 && this.addForm.description.length < 500) {
+        this.descriptionSucc = true;
+      } else {
+        this.descriptionSucc = false;
+      }
+      if(this.descriptionSucc && this.nameSucc && this.tagSucc) {
+        return true;
+      } else {
+        return false;
+      }
+    }, //eofunction
+  },
   methods: {
+    isValidTag(tag) {
+      let re = new RegExp('(([\#])([A-z])+(\,)*)+');
+      if (tag === '') {
+        return false;
+      }
+      return re.test(tag);
+    },
     getTech() {
       const path = this.get_tech_path;
       axios.get(path)
@@ -121,31 +165,6 @@ export default {
         });
     },
     onSubmit() {
-
-      if (this.addForm.name.length > 50) {
-        this.nameError = true;
-        // eslint-disable-next-line
-      } else if (this.addForm.name.length < 1) {
-        this.nameError = true;
-      } else {
-        this.nameError = false;
-      }
-      if (this.addForm.tags.length < 1) {
-        this.tagError = true;
-        // eslint-disable-next-line
-      } else {
-        this.tagError = false;
-      }
-      if (this.addForm.description.length < 1) {
-        this.descriptionError = true;
-        // eslint-disable-next-line
-      } else {
-        this.descriptionError = false;
-      }
-
-      if (this.descriptionError == true || this.nameError == true || this.tagError == true) {
-        return;
-      }
 
       const payload = {
         technology_name: this.addForm.name,
